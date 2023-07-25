@@ -20,7 +20,7 @@ const generationID = () => Math.floor(Date.now());
 router.get("/", function (req, res, next) {
   res.send(200, {
     message: "Thành công",
-    payload: products.filter((item) => !item.isDelete),
+    payload: products.filter((item) => !item.isDeleted),
   });
 });
 
@@ -28,12 +28,12 @@ router.get("/", function (req, res, next) {
 router.get("/:id", function (req, res, next) {
   const { id } = req.params;
   const product = products.find((item) => item.id.toString() === id.toString());
-  if (product.isDelete) {
-    return res.send(200, {
-      message: "Sản phẩm không tồn tại",
-    });
-  }
-  if (product && !product.isDelete) {
+  if (product) {
+    if (product.isDelete) {
+      return res.send(200, {
+        message: "Sản phẩm không tồn tại",
+      });
+    }
     return res.send(200, {
       message: "Thành công",
       payload: product,
@@ -141,7 +141,7 @@ router.patch("/:id", function (req, res, next) {
 });
 /* SEARCH LIST */
 router.post("/search", function (req, res, next) {
-  const {key}=req.query
+  const { key } = req.query;
   return res.send(200, {
     message: "Thành công tìm",
     payload: key,
