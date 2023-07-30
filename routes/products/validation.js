@@ -32,7 +32,7 @@ const validationSchema = yup.object().shape({
       .number()
       .required(({ path }) => `${path.split(".")[1]} không được bỏ trống`),
     isDeleted: yup
-      .boolean()
+      .boolean().default(false)
       .required(({ path }) => `${path.split(".")[1]} không được bỏ trống`),
   }),
 });

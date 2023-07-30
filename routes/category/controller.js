@@ -1,3 +1,6 @@
+const { default: mongoose } = require("mongoose");
+const { Categories } = require("../../models");
+
 let itemList = require("../../data/categories.json");
 const {
   generationID,
@@ -53,31 +56,48 @@ module.exports = {
   },
   create: async (req, res, next) => {
     const { name, description, isDeleted } = req.body;
-    const exitName=itemList.find((item)=>item.name===name)
-    if(exitName){
-      return res.send(400, {
-        mesage: "CategoryName đã tồn tại",
+    mongoose.connect("mongodb://localhost:27017/node-31-database");
+
+    try {
+      const data = {
+        name: "Thời trang",
+        description: "Mô tả ...",
+      };
+
+      const newItem = new Category(data);
+      newItem.save().then((result) => {
+        console.log(result);
       });
+    } catch (err) {
+      console.log(err);
     }
-    const newItemList = [
-      ...itemList,
-      {
-        id: generationID().toString(),
-        name,
-        description,
-        isDeleted,
-      },
-    ];
-    writeFileSync(patch, newItemList);
-    return res.send(200, {
-      mesage: "Thành công",
-    });
+    // const exitName=itemList.find((item)=>item.name===name)
+    // if(exitName){
+    //   return res.send(400, {
+    //     mesage: "CategoryName đã tồn tại",
+    //   });
+    // }
+    // const newItemList = [
+    //   ...itemList,
+    //   {
+    //     id: generationID().toString(),
+    //     name,
+    //     description,
+    //     isDeleted,
+    //   },
+    // ];
+    // writeFileSync(patch, newItemList);
+    // return res.send(200, {
+    //   mesage: "Thành công",
+    // });
   },
   update: async (req, res, next) => {
     const { id } = req.params;
-    const { name,description, isDeleted } = req.body;
-    const exitName=itemList.filter((item)=>item.id!==id).find((item)=>item.name===name)
-    if(exitName){
+    const { name, description, isDeleted } = req.body;
+    const exitName = itemList
+      .filter((item) => item.id !== id)
+      .find((item) => item.name === name);
+    if (exitName) {
       return res.send(400, {
         mesage: "Category Name đã tồn tại",
       });

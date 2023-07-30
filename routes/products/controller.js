@@ -19,8 +19,8 @@ module.exports = {
       const supplier = suppliers.find(
         (item) => item.id.toString() === supplierId.toString()
       );
-      delete product["categoryId"];
-      delete product["supplierId"];
+      // delete product["categoryId"];
+      // delete product["supplierId"];
       return { ...product, category, supplier };
     });
     res.send(200, {
@@ -113,10 +113,10 @@ module.exports = {
       description,
       isDeleted,
     } = req.body;
-    const exitCategoryId = await category.find(
+    const exitCategoryId = await categorys.find(
       (item) => item.id.toString() === categoryId.toString()
     );
-    const exitSupplierId = await supplier.find(
+    const exitSupplierId = await suppliers.find(
       (item) => item.id.toString() === supplierId.toString()
     );
     if (!exitCategoryId || exitCategoryId.isDeleted) {
@@ -162,10 +162,10 @@ module.exports = {
       description,
       isDeleted,
     } = req.body;
-    const exitCategoryId = category.find(
+    const exitCategoryId = categorys.find(
       (item) => item.id.toString() === categoryId.toString()
     );
-    const exitSupplierId = supplier.find(
+    const exitSupplierId = suppliers.find(
       (item) => item.id.toString() === supplierId.toString()
     );
     if (!exitCategoryId || exitCategoryId.isDeleted) {
