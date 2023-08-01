@@ -1,76 +1,45 @@
-let products = require("../../data/products.json");
-let categorys = require("../../data/categories.json");
-let suppliers = require("../../data/suppliers.json");
+const { Product, Category, Supplier } = require("../../models/");
 const {
-  generationID,
   writeFileSync,
   fuzzySearch,
   // combineObjects,
 } = require("../../helper");
+const { isError } = require("util");
 const patch = "./data/products.json";
 module.exports = {
   getList: async (req, res, next) => {
-    let itemList = products.filter((item) => !item.isDeleted);
-    itemList = itemList.map((product) => {
-      const { categoryId, supplierId } = product;
-      const category = categorys.find(
-        (item) => item.id.toString() === categoryId.toString()
-      );
-      const supplier = suppliers.find(
-        (item) => item.id.toString() === supplierId.toString()
-      );
-      delete product["categoryId"];
-      delete product["supplierId"];
-      return { ...product, category, supplier };
-    });
-    res.send(200, {
-      mesage: "Thành công",
-      payload: itemList,
-    });
-  },
-  search: async (req, res, next) => {
-    const { name } = req.query;
-    let productFilter = [];
-    if (name) {
-      const searchRegex = fuzzySearch(name);
-      productFilter = products.filter((item) => {
-        if (!item.isDeleted && searchRegex.test(item.name)) {
-          return item;
-        }
+    try {
+      const result = await Product.find({ isDeleted: false })
+        .populate("category")
+        .populate("supplier")
+        .lean();
+
+      return res.send(200, {
+        message: "Thành công",
+        payload: result,
       });
-      productFilter = productFilter.map((product) => {
-        const { categoryId, supplierId } = product;
-        const category = categorys.find(
-          (item) => item.id.toString() === categoryId.toString()
-        );
-        const supplier = suppliers.find(
-          (item) => item.id.toString() === supplierId.toString()
-        );
-        // if (category && supplier) {
-        //   delete product["categoryId"];
-        //   delete product["supplierId"];
-        // }
-        return { ...product, category, supplier };
-      });
-    } else {
-      productFilter = products.filter((item) => !item.isDeleted);
-      productFilter = productFilter.map((product) => {
-        const { categoryId, supplierId } = product;
-        const category = categorys.find(
-          (item) => item.id.toString() === categoryId.toString()
-        );
-        const supplier = suppliers.find(
-          (item) => item.id.toString() === supplierId.toString()
-        );
-        delete product["categoryId"];
-        delete product["supplierId"];
-        return { ...product, category, supplier };
+    } catch (err) {
+      return res.send(400, {
+        message: "Thất bại",
+        error: err,
       });
     }
-    res.send(200, {
-      mesage: "Thành công",
-      payload: productFilter,
-    });
+  },
+  search: async (req, res, next) => {
+    try {
+      const { name } = req.query;
+      const searchRegex = fuzzySearch(name);
+      const result = await Product.find({ name: searchRegex, isDeleted: false });
+      return res.send(200, {
+        mesage: "Thành công",
+        payload: result,
+      });
+    } catch (err) {
+      return res.send(404, {
+        mesage: "Thất bại",
+        error: err,
+      });
+    }
   },
   getDetail: async (req, res, next) => {
     const { id } = req.params;
@@ -113,27 +82,8 @@ module.exports = {
       description,
       isDeleted,
     } = req.body;
-    const exitCategoryId = await category.find(
-      (item) => item.id.toString() === categoryId.toString()
-    );
-    const exitSupplierId = await supplier.find(
-      (item) => item.id.toString() === supplierId.toString()
-    );
-    if (!exitCategoryId || exitCategoryId.isDeleted) {
-      return res.send(400, {
-        mesage: "Category không tồn tại",
-      });
-    }
-    if (!exitSupplierId || exitSupplierId.isDeleted) {
-      return res.send(400, {
-        mesage: "Supplier không tồn tại",
-      });
-    }
-
-    const newProductList = [
-      ...products,
-      {
-        id: generationID(),
+    try {
+      const newRecord = new Product({
         name,
         price,
         discount,
@@ -142,13 +92,18 @@ module.exports = {
         supplierId,
         description,
         isDeleted,
-      },
-    ];
-
-    writeFileSync(patch, newProductList);
-    return res.send(200, {
-      mesage: "Thành công",
-    });
+      });
+      const result = await newRecord.save();
+      return res.send(400, {
+        mesage: "Thành công",
+        payload: result,
+      });
+    } catch (err) {
+      return res.send(400, {
+        mesage: "Thất bại",
+        error: err,
+      });
+    }
   },
   update: async (req, res, next) => {
     const { id } = req.params;

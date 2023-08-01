@@ -1,5 +1,6 @@
 const Category = require('./categories');
 const Supplier = require('./suppliers');
+const Product = require('./products')
 // const Customer = require('./Customer');
 // const Employee = require('./Employee');
 // const Media = require('./Media');
@@ -13,6 +14,6 @@ module.exports = {
   // Employee,
   // Media,
   // Order,
-  // Product,
+  Product,
   Supplier,
 };

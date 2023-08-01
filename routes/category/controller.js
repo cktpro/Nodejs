@@ -1,29 +1,39 @@
 const { Category } = require("../../models");
-const {
-  generationID,
-  writeFileSync,
-  fuzzySearch,
-  // combineObjects,
-} = require("../../helper");
-const patch = "./data/categories.json";
+const { fuzzySearch } = require("../../helper");
+const { isError } = require("util");
 module.exports = {
   getList: async (req, res, next) => {
-    const result = await Category.find({ isDeleted: false });
-    res.send(200, {
-      mesage: "Thành công",
-      payload: result,
-    });
+    try {
+      const result = await Category.find({ isDeleted: false });
+
+      res.send(200, {
+        mesage: "Thành công",
+        payload: result,
+      });
+    } catch (err) {
+      res.send(400, {
+        mesage: "Thất bại",
+        error: err,
+      });
+    }
   },
   search: async (req, res, next) => {
     const { name } = req.query;
     const searchRegex = fuzzySearch(name);
     try {
-      const result= await Category.find({name:searchRegex,isDeleted:false})
+      const result = await Category.find({
+        name: searchRegex,
+        isDeleted: false,
+      });
+      if (result) {
         res.send(200, {
           mesage: "Thành công",
           payload: result,
         });
-      
+      }
+      res.send(400, {
+        mesage: "Không tìm thấy",
+      });
     } catch (error) {
       res.send(400, {
         mesage: "Thất bại",
@@ -33,16 +43,23 @@ module.exports = {
   },
   getDetail: async (req, res, next) => {
     const { id } = req.params;
-    const result = await Category.findOne({ _id: id, isDeleted: false });
-    if (result) {
-      return res.send(200, {
-        mesage: "Thành công",
-        payload: result,
+    try {
+      const result = await Category.findOne({ _id: id, isDeleted: false });
+      if (result) {
+        return res.send(200, {
+          mesage: "Thành công",
+          payload: result,
+        });
+      }
+      return res.send(404, {
+        mesage: "Không tìm thấy",
+      });
+    } catch (err) {
+      return res.send(400, {
+        mesage: "Thất bại",
+        error: isError,
       });
     }
-    return res.send(404, {
-      mesage: "Không tìm thấy",
-    });
   },
   create: async (req, res, next) => {
     try {
@@ -50,9 +67,14 @@ module.exports = {
       const newRecord = new Category({ name, description });
       let result = await newRecord.save();
       console.log("◀◀◀ result ▶▶▶", result);
-      return res.send(200, {
-        message: "Thành công",
-        payload: result,
+      if (result) {
+        return res.send(200, {
+          message: "Thành công",
+          payload: result,
+        });
+      }
+      return res.send(400, {
+        message: "Không tìm thấy",
       });
     } catch (err) {
       return res.send(400, {
@@ -76,8 +98,8 @@ module.exports = {
           payload: result,
         });
       }
-      return res.send(400, {
-        message: "Thất bại",
+      return res.send(404, {
+        message: "Không tìm thấy",
       });
     } catch (err) {
       return res.send(400, {
@@ -121,18 +143,26 @@ module.exports = {
   // },
   softDelete: async (req, res, next) => {
     const { id } = req.params;
-    const result= await Category.findByIdAndUpdate(id,
-      {isDeleted:true},
-      {new:true}
-    )
-    if(result){
-      return res.send(200, {
-        message: "Thành công xóa",
+    try {
+      const result = await Category.findByIdAndUpdate(
+        id,
+        { isDeleted: true },
+        { new: true }
+      );
+      if (result) {
+        return res.send(200, {
+          message: "Thành công xóa",
+        });
+      }
+      return res.send(404, {
+        message: "Không tìm thấy",
+      });
+    } catch (err) {
+      return res.send(400, {
+        message: "Thất bại",
+        error: err,
       });
     }
-    return res.send(400, {
-      message: "Thất bại",
-    });
   },
   // hardDelete: async(req,res,next)=>{
   //   const {id} =req.params;

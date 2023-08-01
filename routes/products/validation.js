@@ -26,10 +26,10 @@ const validationSchema = yup.object().shape({
       .max(3000, "Mô tả quá dài")
       .required(({ path }) => `${path.split(".")[1]} không được bỏ trống`),
       categoryId: yup
-      .number()
+      .string()
       .required(({ path }) => `${path.split(".")[1]} không được bỏ trống`),
       supplierId: yup
-      .number()
+      .string()
       .required(({ path }) => `${path.split(".")[1]} không được bỏ trống`),
     isDeleted: yup
       .boolean()
