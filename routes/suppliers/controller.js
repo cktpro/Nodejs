@@ -1,17 +1,25 @@
-let itemList = require("../../data/suppliers.json");
+const { Supplier } = require("../../models");
 const {
   generationID,
   writeFileSync,
   fuzzySearch,
   // combineObjects,
 } = require("../../helper");
-const patch = "./data/suppliers.json";
 module.exports = {
   getList: async (req, res, next) => {
-    res.send(200, {
-      mesage: "Thành công",
-      payload: itemList.filter((item) => !item.isDeleted),
-    });
+    const result= await Supplier.find({isDeleted:false})
+    try {
+      res.send(200, {
+        mesage: "Thành công",
+        payload: result,
+      });
+    } catch (err) {
+      res.send(400, {
+        mesage: "Thành công",
+        error:err,
+      });
+    }
+    
   },
   search: async (req, res, next) => {
     const { name } = req.query;

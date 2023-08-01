@@ -1,4 +1,4 @@
-let itemList = require("../../data/categories.json");
+const { Category } = require("../../models");
 const {
   generationID,
   writeFileSync,
@@ -8,43 +8,36 @@ const {
 const patch = "./data/categories.json";
 module.exports = {
   getList: async (req, res, next) => {
+    const result = await Category.find({ isDeleted: false });
     res.send(200, {
       mesage: "Thành công",
-      payload: itemList.filter((item) => !item.isDeleted),
+      payload: result,
     });
   },
   search: async (req, res, next) => {
     const { name } = req.query;
-    let itemFilter = [];
-    if (name) {
-      const searchRegex = fuzzySearch(name);
-      itemFilter = itemList.filter((item) => {
-        if (!item.isDeleted && searchRegex.test(item.name)) {
-          return item;
-        }
+    const searchRegex = fuzzySearch(name);
+    try {
+      const result= await Category.find({name:searchRegex,isDeleted:false})
+        res.send(200, {
+          mesage: "Thành công",
+          payload: result,
+        });
+      
+    } catch (error) {
+      res.send(400, {
+        mesage: "Thất bại",
+        error: error,
       });
-    } else {
-      itemFilter = itemList.filter((item) => !item.isDeleted);
     }
-    res.send(200, {
-      mesage: "Thành công",
-      payload: itemFilter,
-    });
   },
   getDetail: async (req, res, next) => {
     const { id } = req.params;
-    const itemDetail = itemList.find(
-      (item) => item.id.toString() === id.toString()
-    );
-    if (itemDetail) {
-      if (itemDetail.isDeleted) {
-        return res.send(400, {
-          mesage: "Sản phẩm đã bị xóa",
-        });
-      }
+    const result = await Category.findOne({ _id: id, isDeleted: false });
+    if (result) {
       return res.send(200, {
         mesage: "Thành công",
-        payload: itemDetail,
+        payload: result,
       });
     }
     return res.send(404, {
@@ -52,64 +45,46 @@ module.exports = {
     });
   },
   create: async (req, res, next) => {
-    const { name, description, isDeleted } = req.body;
-    const exitName=itemList.find((item)=>item.name===name)
-    if(exitName){
+    try {
+      const { name, description } = req.body;
+      const newRecord = new Category({ name, description });
+      let result = await newRecord.save();
+      console.log("◀◀◀ result ▶▶▶", result);
+      return res.send(200, {
+        message: "Thành công",
+        payload: result,
+      });
+    } catch (err) {
       return res.send(400, {
-        mesage: "CategoryName đã tồn tại",
+        message: "Thất bại",
+        errors: err,
       });
     }
-    const newItemList = [
-      ...itemList,
-      {
-        id: generationID().toString(),
-        name,
-        description,
-        isDeleted,
-      },
-    ];
-    writeFileSync(patch, newItemList);
-    return res.send(200, {
-      mesage: "Thành công",
-    });
   },
   update: async (req, res, next) => {
     const { id } = req.params;
-    const { name,description, isDeleted } = req.body;
-    const exitName=itemList.filter((item)=>item.id!==id).find((item)=>item.name===name)
-    if(exitName){
-      return res.send(400, {
-        mesage: "Category Name đã tồn tại",
-      });
-    }
-    const updateData = {
-      id,
-      name,
-      description,
-      isDeleted,
-    };
-    let isErr = false;
-    const newItemList = itemList.map((item) => {
-      if (item.id.toString() === id.toString()) {
-        if (item.isDeleted) {
-          isErr = true;
-          return item;
-        } else {
-          return updateData;
-        }
+    const { name, description, isDeleted } = req.body;
+    try {
+      const result = await Category.findOneAndUpdate(
+        { _id: id, isDeleted: false },
+        { name, description, isDeleted },
+        { new: true }
+      );
+      if (result) {
+        return res.send(400, {
+          message: "Thành công",
+          payload: result,
+        });
       }
-      return item;
-    });
-    if (!isErr) {
-      writeFileSync(patch, newItemList);
-      return res.send(200, {
-        message: "Thành công",
-        payload: updateData,
+      return res.send(400, {
+        message: "Thất bại",
+      });
+    } catch (err) {
+      return res.send(400, {
+        message: "Thất bại",
+        errors: err,
       });
     }
-    return res.send(400, {
-      message: "Cập nhật không thành công",
-    });
   },
   // updatePatch: async (req, res, next) => {
   //   const { id } = req.params;
@@ -146,15 +121,17 @@ module.exports = {
   // },
   softDelete: async (req, res, next) => {
     const { id } = req.params;
-    const newItemList = itemList.map((item) => {
-      if (item.id.toString() === id.toString()) {
-        return { ...item, isDeleted: true };
-      }
-      return item;
-    });
-    await writeFileSync(patch, newItemList);
-    return res.send(200, {
-      message: "Thành công xóa",
+    const result= await Category.findByIdAndUpdate(id,
+      {isDeleted:true},
+      {new:true}
+    )
+    if(result){
+      return res.send(200, {
+        message: "Thành công xóa",
+      });
+    }
+    return res.send(400, {
+      message: "Thất bại",
     });
   },
   // hardDelete: async(req,res,next)=>{
