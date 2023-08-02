@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -7,7 +8,10 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var writeWelcome = require('./routes/welcome');
-var productsRouter=require('./routes/products')
+var productsRouter=require('./routes/products/router')
+var categoryRouter=require('./routes/category/router')
+var suppliersRouter=require('./routes/suppliers/router')
+var customersRouter=require('./routes/customers/router')
 require('dotenv').config()
 console.log(process.env)
 var app = express();
@@ -22,10 +26,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+mongoose.connect(process.env.URI);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
 app.use('/welcomes', writeWelcome);
+app.use('/category', categoryRouter);
+app.use('/suppliers', suppliersRouter);
+app.use('/customers', customersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

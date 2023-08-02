@@ -1,65 +1,156 @@
 [
   {
-    "id": 1683726190887,
-    "name": "Iphone 99",
-    "price": 1000,
-    "description": "",
-    "discount": 10,
-    "isDelete": true
-  },
-  { "id": "1684158785819", "name": "Iphone XSM" },
-  { "id": "1684159135273", "name": "Iphone 13" },
-  {
-    "id": 1684159174854,
-    "name": "Iphone 13",
-    "price": 13000,
-    "description": "Iphone 13",
-    "discount": 13,
-    "isDelete": false
-  },
-  {
-    "id": 1684159200839,
-    "name": "Iphone 14",
-    "price": 13000,
-    "description": "Iphone 13",
-    "discount": 13,
-    "isDelete": false
-  },
-  { "id": "1684159697780", "name": "Iphone 666", "price": 1700 },
-  {
-    "id": 1684322293859,
-    "name": "Sản phẩm số 9",
-    "price": 1000,
-    "description": "Snar phẩm số 9",
-    "discount": 4,
-    "isDelete": false
-  },
-  {
-    "id": 1684322588040,
-    "name": "Iphone 14.3",
-    "price": 122,
-    "description": "Iphone 14",
-    "discount": 11,
-    "isDelete": false
-  },
-  {
-    "id": 1684323750877,
-    "name": "Iphone 15",
-    "price": 1700,
-    "description": "Iphone 15 pro",
+    "id": 1690534808386,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
     "discount": 20,
-    "isDelete": false
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": true
   },
   {
-    "name": "iPhone 1555 Pro Max",
-    "price": 2000,
-    "id": 1689690438003,
-    "isDelete": false
+    "id": 1690534810959,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": true
   },
   {
-    "name": "Iphone 888",
-    "price": 1700,
-    "id": 1689855563643,
-    "isDelete": false
+    "id": 1690534814240,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": true
+  },
+  {
+    "id": 1690534847591,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": true
+  },
+  {
+    "id": 1690534863885,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": true
+  },
+  {
+    "id": 1690534908745,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": false
+  },
+  {
+    "id": 1690534910809,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": true
+  },
+  {
+    "id": 1690534960738,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": true
+  },
+  {
+    "id": 1690534965416,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": false
+  },
+  {
+    "id": 1690534975312,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": false
+  },
+  {
+    "id": 1690534994806,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": false
+  },
+  {
+    "id": 1690535008235,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": false
+  },
+  {
+    "id": 1690535021456,
+    "name": "Samsung Galaxy S22 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": false
+  },
+  {
+    "id": "1690535043743",
+    "name": "Samsung Galaxy S23 Ultra",
+    "price": 1200,
+    "discount": 20,
+    "stock": 100,
+    "categoryId": "1690527592297",
+    "supplierId": "1690527426167",
+    "description": "Sản phẩm hot",
+    "isDeleted": false
   }
 ]
