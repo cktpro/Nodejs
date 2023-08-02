@@ -1,7 +1,5 @@
 const { Supplier } = require("../../models");
 const {
-  generationID,
-  writeFileSync,
   fuzzySearch,
   // combineObjects,
 } = require("../../helper");
@@ -15,28 +13,27 @@ module.exports = {
       });
     } catch (err) {
       res.send(400, {
-        message: "Thành công",
+        message: "Thất bại",
         error: err,
       });
     }
   },
   search: async (req, res, next) => {
-    const { name } = req.query;
-    let itemFilter = [];
-    if (name) {
-      const searchRegex = fuzzySearch(name);
-      itemFilter = itemList.filter((item) => {
-        if (!item.isDeleted && searchRegex.test(item.name)) {
-          return item;
-        }
+    try {
+      const { name } = req.query;
+      const conditionSearch = { isDeleted: false };
+      if (name) conditionSearch.name = fuzzySearch(name);
+      let result = await Supplier.find(conditionSearch);
+      res.send(200, {
+        message: "Thành công",
+        payload: result
       });
-    } else {
-      itemFilter = itemList.filter((item) => !item.isDeleted);
+    } catch (err) {
+      res.send(404, {
+        message: "Thất bại",
+        error: err,
+      });
     }
-    res.send(200, {
-      message: "Thành công",
-      payload: itemFilter,
-    });
   },
   getDetail: async (req, res, next) => {
     const { id } = req.params;
@@ -143,8 +140,8 @@ module.exports = {
     try {
       const result = await Supplier.findByIdAndUpdate(
         id,
-        { isDeleted:true },
-        { new : true }
+        { isDeleted: true },
+        { new: true }
       );
       if (result) {
         return res.send(200, {

@@ -1,12 +1,11 @@
-const { Customer } = require("../../models");
+const { Employee } = require("../../models");
 const {
   fuzzySearch,
 } = require("../../helper");
-const { isError } = require("util");
 module.exports = {
   getList: async (req, res, next) => {
     try {
-      const result = await Customer.find({ isDeleted: false });
+      const result = await Employee.find({ isDeleted: false });
       if (result) {
         return res.send({
           code: 200,
@@ -30,7 +29,7 @@ module.exports = {
       const { name } = req.query;
       const conditionFind = { isDeleted: false };
       if (name) conditionFind.name = fuzzySearch(name);
-      const result = Customer.find(conditionFind);
+      const result = Employee.find(conditionFind);
       if (result) {
         return res.send({
           code: 200,
@@ -53,8 +52,7 @@ module.exports = {
   getDetail: async (req, res, next) => {
     const { id } = req.params;
     try {
-      const result = await Customer.findOne({ _id: id,isDeleted: false });
-      console.log("◀◀◀ result ▶▶▶", result);
+      const result = await Employee.findOne({ _id: id,isDeleted: false  });
       if (result) {
         return res.send({
           code: 200,
@@ -70,7 +68,7 @@ module.exports = {
       return res.send({
         code: 400,
         mesage: "Thất bại",
-        error: isError,
+        error: err,
       });
     }
   },
@@ -85,7 +83,7 @@ module.exports = {
       isDeleted,
     } = req.body;
     try {
-      const newRecord = new Customer({
+      const newRecord = new Employee({
         firstName,
         lastName,
         phoneNumber,
@@ -125,7 +123,7 @@ module.exports = {
       isDeleted,
     } = req.body;
     try {
-      const result = await Customer.findOneAndUpdate(
+      const result = await Employee.findOneAndUpdate(
         { _id: id },
         {
           firstName,
@@ -160,7 +158,7 @@ module.exports = {
   softDelete: async (req, res, next) => {
     const { id } = req.params;
     try {
-      const result = await Customer.findByIdAndUpdate(
+      const result = await Employee.findByIdAndUpdate(
         id,
         { isDeleted: true },
         { new: true }
