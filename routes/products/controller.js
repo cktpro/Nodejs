@@ -47,7 +47,9 @@ module.exports = {
       } else if (priceEnd) {
         conditionFind.price = { $lte: parseFloat(priceEnd) };
       }
-      const result = await Product.find(conditionFind);
+      const result = await Product.find(conditionFind).populate("category")
+      .populate("supplier")
+      .lean();;
       if (result) {
         return res.send(200, {
           mesage: "Thành công",

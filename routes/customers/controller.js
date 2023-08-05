@@ -1,7 +1,5 @@
 const { Customer } = require("../../models");
-const {
-  fuzzySearch,
-} = require("../../helper");
+const { fuzzySearch } = require("../../helper");
 const { isError } = require("util");
 module.exports = {
   getList: async (req, res, next) => {
@@ -27,10 +25,17 @@ module.exports = {
   },
   search: async (req, res, next) => {
     try {
-      const { name } = req.query;
+      const { name,yearOfBirthday,birthday } = req.query;
       const conditionFind = { isDeleted: false };
-      if (name) conditionFind.name = fuzzySearch(name);
-      const result = Customer.find(conditionFind);
+      if (name) {
+        {
+          conditionFind.$expr = {$or:[{firstName:fuzzySearch(name)},{lastName:fuzzySearch(name)}]};
+        }
+      }
+      console.log('◀◀◀ conditionFind ▶▶▶',conditionFind);
+      
+      const result = await Customer.find(conditionFind);
+      
       if (result) {
         return res.send({
           code: 200,
@@ -44,7 +49,7 @@ module.exports = {
       });
     } catch (error) {
       return res.send({
-        code: 400,
+        code: 500,
         mesage: "Thất bại",
         error: error,
       });
@@ -53,7 +58,7 @@ module.exports = {
   getDetail: async (req, res, next) => {
     const { id } = req.params;
     try {
-      const result = await Customer.findOne({ _id: id,isDeleted: false });
+      const result = await Customer.findOne({ _id: id, isDeleted: false });
       console.log("◀◀◀ result ▶▶▶", result);
       if (result) {
         return res.send({
