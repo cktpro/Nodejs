@@ -19,7 +19,7 @@ const updateStatusSchema = yup.object({
 });
 const validationCreateSchema = yup.object().shape({
   body: yup.object({
-    createdDate: yup.date(),
+    createdDate: yup.date().required(({ path }) => `${path.split(".")[1]} không được bỏ trống`),
     shippedDate: yup
       .date()
       .test("check date", "${path} ngày tháng không hợp lệ", (value) => {

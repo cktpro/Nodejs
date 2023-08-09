@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 // Mongoose Datatypes:
@@ -9,28 +9,28 @@ const { Schema, model } = mongoose;
 
 const orderDetailSchema = new Schema(
   {
-    productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+    productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
     quantity: { type: Number, require: true, min: 0, default: 1 },
     price: { type: Number, required: true, min: 0, default: 0 },
     discount: { type: Number, required: true, default: 0 },
   },
   {
     versionKey: false,
-  },
+  }
 );
 
 // Virtual with Populate
-orderDetailSchema.virtual('product', {
-  ref: 'products',
-  localField: 'productId',
-  foreignField: '_id',
+orderDetailSchema.virtual("product", {
+  ref: "products",
+  localField: "productId",
+  foreignField: "_id",
   justOne: true,
 });
 
 // Virtuals in console.log()
-orderDetailSchema.set('toObject', { virtuals: true });
+orderDetailSchema.set("toObject", { virtuals: true });
 // Virtuals in JSON
-orderDetailSchema.set('toJSON', { virtuals: true });
+orderDetailSchema.set("toJSON", { virtuals: true });
 
 // -----------------------------------------------------------------------------------------------
 
@@ -60,8 +60,8 @@ const orderSchema = new Schema(
     paymentType: {
       type: String,
       required: true,
-      default: 'CASH',
-      enum: ['CASH', 'CREDIT_CARD'],
+      default: "CASH",
+      enum: ["CASH", "CREDIT_CARD"],
       // validate: {
       //   validator: (value) => {
       //     if (['CASH', 'CREDIT_CARD'].includes(value.toUpperCase())) {
@@ -76,8 +76,8 @@ const orderSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ['WAITING', 'COMPLETED', 'CANCELED', 'REJECTED', 'DELIVERING'],
-      default: 'WAITING',
+      enum: ["WAITING", "COMPLETED", "CANCELED", "REJECTED", "DELIVERING"],
+      default: "WAITING",
       // validate: {
       //   validator: (value) => {
       //     if (['WAITING', 'COMPLETED', 'CANCELED'].includes(value)) {
@@ -88,8 +88,17 @@ const orderSchema = new Schema(
       //   message: `Status: {VALUE} is invalid!`,
       // },
     },
-    customerId: { type: Schema.Types.ObjectId, ref: 'Customer', required: true},
-    employeeId: { type: Schema.Types.ObjectId, ref: 'Employee' },
+    shippingAddress: {
+      type: String,
+      required: [true,"Địa chỉ giao hàng không được để trống"],
+      max: 500,
+    },
+    customerId: {
+      type: Schema.Types.ObjectId,
+      ref: "Customer",
+      required: true,
+    },
+    employeeId: { type: Schema.Types.ObjectId, ref: "Employee" },
     // isDeleted: {
     //   type: Boolean,
     //   default: false,
@@ -101,27 +110,27 @@ const orderSchema = new Schema(
   {
     versionKey: false,
     timestamps: true,
-  },
+  }
 );
 
 // Virtual with Populate
-orderSchema.virtual('customer', {
-  ref: 'customers',
-  localField: 'customerId',
-  foreignField: '_id',
+orderSchema.virtual("customer", {
+  ref: "customers",
+  localField: "customerId",
+  foreignField: "_id",
   justOne: true,
 });
-orderSchema.virtual('employee', {
-  ref: 'employees',
-  localField: 'employeeId',
-  foreignField: '_id',
+orderSchema.virtual("employee", {
+  ref: "employees",
+  localField: "employeeId",
+  foreignField: "_id",
   justOne: true,
 });
 
 // Virtuals in console.log()
-orderSchema.set('toObject', { virtuals: true });
+orderSchema.set("toObject", { virtuals: true });
 // Virtuals in JSON
-orderSchema.set('toJSON', { virtuals: true });
+orderSchema.set("toJSON", { virtuals: true });
 
-const Order = model('orders', orderSchema);
+const Order = model("orders", orderSchema);
 module.exports = Order;

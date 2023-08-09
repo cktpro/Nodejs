@@ -65,5 +65,5 @@ productSchema.virtual('discountedPrice').get(function () {
   productSchema.set('toObject', { virtuals: true });
   //
   productSchema.plugin(mongooseLeanVirtuals);
-const Product = model("Products", productSchema);
+const Product = model("products", productSchema);
 module.exports = Product;
