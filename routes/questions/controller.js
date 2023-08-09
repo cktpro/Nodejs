@@ -736,16 +736,21 @@ module.exports = {
           address: { $first: "$employee.address" },
           birthday: { $first: "$employee.birthday" },
           Total: {
-            $sum: { $multiply:[{$divide: [
-              {
-                $multiply: [
-                  { $subtract: [100, "$orderDetails.discount"] },
-                  "$orderDetails.price",
-                ],
-              },
-              100,
-            ]},'$orderDetails.quantity']
-              
+            $sum: {
+              $multiply: [
+                {
+                  $divide: [
+                    {
+                      $multiply: [
+                        { $subtract: [100, "$orderDetails.discount"] },
+                        "$orderDetails.price",
+                      ],
+                    },
+                    100,
+                  ],
+                },
+                "$orderDetails.quantity",
+              ],
             },
           },
         });
@@ -803,5 +808,107 @@ module.exports = {
         error: error,
       });
     }
+  },
+  question26: async (req, res, next) => {
+    const { fromDate, toDate } = req.query;
+    try {
+      let conditionFind = {};
+      if (fromDate && toDate) {
+        const startDate = new Date(fromDate);
+        const endDate = new Date(toDate);
+        // conditionFind.$expr={$and:[{orders:{$ne:null}},{$or:[{$lte:['orders.createdDate',startDate]},{$gte:['orders.createdDate',endDate]}]}]}
+        conditionFind.$or =[ {orders:null},
+          {$and:
+           [
+            { orders:  {$ne:null}  },
+            {
+              $or: [
+                { "orders.createdDate": { $lte: startDate } },
+                { "orders.createdDate": { $gte: endDate } }
+              ],
+            }
+          ]}]
+        }
+      const result = await Product.aggregate()
+        .lookup({
+          from: "orders",
+          localField: "_id",
+          foreignField: "orderDetails.productId",
+          as: "orders",
+        })
+        .unwind({
+          path: "$orders",
+          preserveNullAndEmptyArrays: true,
+        })
+        .match({...conditionFind})
+        .lookup({
+          from:'suppliers',
+          localField:"supplierId",
+          foreignField:'_id',
+          as:'supplier'
+        })
+        .unwind('supplier').group({
+          _id:'$supplierId',
+          name:{$first:'$supplier.name'},
+          email:{$first:'$supplier.email'},
+          phoneNumber:{$first:'$supplier.phoneNumber'},
+          address:{$first:'$supplier.address'}
+        });
+      if (result.length > 0) {
+        return res.send({
+          code: 200,
+          mesage: "Thành công",
+          payload: result,
+        });
+      }
+      return res.status(400).json({
+        code: 404,
+        mesage: "Không tìm thấy",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        code: 500,
+        mesage: "Thất bại",
+        error: error,
+      });
+    }
+  },
+  question27:async(req,res,next)=>{
+try {
+  const result=await Employee.aggregate().lookup({
+    from:'orders',
+    localField:'_id',
+    foreignField:'employeeId',
+    as:'orders'
+  }).unwind('orders').unwind('orders.orderDetails')
+  .group({
+    _id:'$_id',
+    firstName:{$first:'$firstName'},
+    lastName:{$first:'$lastName'},
+    email:{$first:'$email'},
+    phoneNumber:{$first:'$phoneNumber'},
+    address:{$first:'$address'},
+    sales:{$sum:getDiscountedPrice("orders.orderDetails.discount","orders.orderDetails.price","orders.orderDetails.quantity")}
+  }).sort({
+    sales:-1
+  }).limit(2).skip(0)
+  if(result){
+    return res.send({
+    code: 200,
+    mesage: 'Thành công',
+    payload: result,
+    });
+  }
+  return res.status(400).json({
+  code: 404,
+  mesage: 'Không tìm thấy',
+  });
+} catch (error) {
+  return res.status(500).json({
+  code: 500,
+  mesage: 'Thất bại',
+  error: error,
+  });
+}
   },
 };
