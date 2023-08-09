@@ -93,7 +93,7 @@ module.exports = {
         { new: true }
       );
       if (result) {
-        return res.send(400, {
+        return res.send(200, {
           message: "Thành công",
           payload: result,
         });

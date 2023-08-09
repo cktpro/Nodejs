@@ -8,6 +8,12 @@ const validationCreateSchema = yup.object().shape({
     isDeleted: yup.boolean(),
   }),
 });
+const validationStatusSchema=yup.object().shape({
+  query: yup.object({
+    status: yup.string().oneOf(["WAITING","CANCELED","COMPLETED","DELIVERING","REJECTED"]).required(({ path }) => `${path.split(".")[1]} không được bỏ trống`),
+  }),
+});
 module.exports = {
   validationCreateSchema,
+  validationStatusSchema
 };

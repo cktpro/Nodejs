@@ -1,6 +1,9 @@
-const Category = require('./categories');
-const Supplier = require('./suppliers');
-const Product = require('./products')
+const Category = require("./categories");
+const Supplier = require("./suppliers");
+const Product = require("./products");
+const Customer = require("./customers");
+const Employee = require("./empoyees");
+const Order = require("./orders");
 // const Customer = require('./Customer');
 // const Employee = require('./Employee');
 // const Media = require('./Media');
@@ -9,11 +12,11 @@ const Product = require('./products')
 // const Supplier = require('./Supplier');
 
 module.exports = {
-    Category,
-  // Customer,
-  // Employee,
+  Category,
+  Customer,
+  Employee,
   // Media,
-  // Order,
+  Order,
   Product,
   Supplier,
 };

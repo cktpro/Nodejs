@@ -27,7 +27,7 @@ const productSchema = new Schema(
         min:0,
         default:0
       },
-      categoryId:{type:Schema.Types.ObjectId,ref:"Category",require:true},
+      categoryId:{type:Schema.Types.ObjectId,maxLength: [50, "Tên sản  phẩm không được vượt quá 50 ký tự"],ref:"Category",require:true},
       supplierId:{type : Schema.Types.ObjectId,ref:"Supplier",require:true},
     description:{type:String,maxLength:[3000,"Mô tả không vượt quá 3000 ký tự"]},
     isDeleted: {
@@ -65,5 +65,5 @@ productSchema.virtual('discountedPrice').get(function () {
   productSchema.set('toObject', { virtuals: true });
   //
   productSchema.plugin(mongooseLeanVirtuals);
-const Product = model("Products", productSchema);
+const Product = model("products", productSchema);
 module.exports = Product;
