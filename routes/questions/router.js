@@ -19,7 +19,11 @@ const {
   question18,
   question19,
   question20,
-  question21
+  question21,
+  question22,
+  question23,
+  question24,
+  question25
 } = require("./controller");
 const checkIdSchema = require("../validationId");
 const {
@@ -46,5 +50,9 @@ router.get("/18", question18);
 router.get("/19", question19);
 router.get("/20", question20);
 router.get("/21", question21);
+router.get("/22", question22);
+router.get("/23", question23);
+router.get("/24", question24);
+router.get("/25", question25);
 
 module.exports = router;

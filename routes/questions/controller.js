@@ -8,6 +8,7 @@ const {
   Employee,
 } = require("../../models");
 const { validationStatusSchema } = require("./validation");
+const { getDiscountedPrice } = require("../../helper");
 module.exports = {
   question1: async (req, res, next) => {
     try {
@@ -578,15 +579,211 @@ module.exports = {
           localField: "customerId",
           foreignField: "_id",
           as: "customer",
-        }).unwind('$customer')
+        })
+        .unwind("$customer")
         .group({
-          _id:'$customer._id',
-          firstName:{$first:'$customer.firstName'},
-          lastName:{$first:'$customer.lastName'},
-          email:{$first:'$customer.email'},
-          phoneNumbber:{$first:'$customer.phoneNumber'},
-          address:{$first:'$customer.address'},
-         birthday:{$first:'$customer.birthday'},
+          _id: "$customer._id",
+          firstName: { $first: "$customer.firstName" },
+          lastName: { $first: "$customer.lastName" },
+          email: { $first: "$customer.email" },
+          phoneNumbber: { $first: "$customer.phoneNumber" },
+          address: { $first: "$customer.address" },
+          birthday: { $first: "$customer.birthday" },
+        });
+      if (result.length > 0) {
+        return res.send({
+          code: 200,
+          mesage: "Thành công",
+          payload: result,
+        });
+      }
+      return res.status(400).json({
+        code: 404,
+        mesage: "Không tìm thấy",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        code: 500,
+        mesage: "Thất bại",
+        error: error,
+      });
+    }
+  },
+  question22: async (req, res, next) => {
+    const { fromDate, toDate } = req.query;
+    let conditionFind = {};
+    if (fromDate && toDate) {
+      const startDate = new Date(fromDate);
+      const endDate = new Date(toDate);
+      conditionFind.$expr = {
+        $and: [
+          { $gte: ["$createdDate", startDate] },
+          { $lte: ["$createdDate", endDate] },
+        ],
+      };
+    }
+    try {
+      const result = await Order.aggregate()
+        .match({ ...conditionFind })
+        .lookup({
+          from: "customers",
+          localField: "customerId",
+          foreignField: "_id",
+          as: "customer",
+        })
+        .unwind("orderDetails")
+        .addFields({
+          totalPrice: {
+            $divide: [
+              {
+                $multiply: [
+                  { $subtract: [100, "$orderDetails.discount"] },
+                  "$orderDetails.price",
+                ],
+              },
+              100,
+            ],
+          },
+        })
+        .unwind("customer")
+        .group({
+          _id: "$customerId",
+          firstName: { $first: "$customer.firstName" },
+          lastName: { $first: "$customer.lastName" },
+          email: { $first: "$customer.email" },
+          phoneNumbber: { $first: "$customer.phoneNumber" },
+          address: { $first: "$customer.address" },
+          total: { $sum: "$totalPrice" },
+        });
+      if (result.length > 0) {
+        return res.send({
+          code: 200,
+          mesage: "Thành công",
+          payload: result,
+        });
+      }
+      return res.status(400).json({
+        code: 404,
+        mesage: "Không tìm thấy",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        code: 500,
+        mesage: "Thất bại",
+        error: error,
+      });
+    }
+  },
+  question23: async (req, res, next) => {
+    try {
+      const result = await Order.aggregate()
+        .unwind("orderDetails")
+        .addFields({
+          totalPrice: {
+            $divide: [
+              {
+                $multiply: [
+                  { $subtract: [100, "$orderDetails.discount"] },
+                  "$orderDetails.price",
+                ],
+              },
+              100,
+            ],
+          },
+        })
+        .group({
+          _id: "$_id",
+          createdDate: { $first: "$createdDate" },
+          status: { $first: "$status" },
+          Total: { $sum: "$totalPrice" },
+        });
+      if (result.length > 0) {
+        return res.send({
+          code: 200,
+          mesage: "Thành công",
+          payload: result,
+        });
+      }
+      return res.status(400).json({
+        code: 404,
+        mesage: "Không tìm thấy",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        code: 500,
+        mesage: "Thất bại",
+        error: error,
+      });
+    }
+  },
+  question24: async (req, res, next) => {
+    try {
+      const result = await Order.aggregate()
+        .unwind("orderDetails")
+        .lookup({
+          from: "employees",
+          localField: "employeeId",
+          foreignField: "_id",
+          as: "employee",
+        })
+        .unwind("employee")
+        .group({
+          _id: "$employee._id",
+          firstName: { $first: "$employee.firstName" },
+          lastName: { $first: "$employee.lastName" },
+          email: { $first: "$employee.email" },
+          phoneNumber: { $first: "$employee.phoneNumber" },
+          address: { $first: "$employee.address" },
+          birthday: { $first: "$employee.birthday" },
+          Total: {
+            $sum: { $multiply:[{$divide: [
+              {
+                $multiply: [
+                  { $subtract: [100, "$orderDetails.discount"] },
+                  "$orderDetails.price",
+                ],
+              },
+              100,
+            ]},'$orderDetails.quantity']
+              
+            },
+          },
+        });
+      if (result) {
+        return res.send({
+          code: 200,
+          mesage: "Thành công",
+          payload: result,
+        });
+      }
+      return res.status(400).json({
+        code: 404,
+        mesage: "Không tìm thấy",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        code: 500,
+        mesage: "Thất bại",
+        error: error,
+      });
+    }
+  },
+  question25: async (req, res, next) => {
+    try {
+      const result = await Product.aggregate()
+        .lookup({
+          from: "orders",
+          localField: "_id",
+          foreignField: "orderDetails.productId",
+          as: "order",
+        })
+        .match({ order: { $size: 0 } })
+        .project({
+          name: 1,
+          price: 1,
+          stock: 1,
+          discount: 1,
+          discountedPrice: getDiscountedPrice("discount", "price"),
         });
       if (result.length > 0) {
         return res.send({

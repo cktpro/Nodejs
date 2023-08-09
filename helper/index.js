@@ -83,5 +83,18 @@ module.exports = {
     }
   
     return query;
-  }  
+  } ,
+  getDiscountedPrice:(discountName,priceName,quantityName)=>{
+    return { $multiply:[{$divide: [
+      {
+        $multiply: [
+          { $subtract: [100, "$orderDetails.discount"] },
+          "$orderDetails.price",
+        ],
+      },
+      100,
+    ]},'$orderDetails.quantity']
+      
+    }
+  }
 };
