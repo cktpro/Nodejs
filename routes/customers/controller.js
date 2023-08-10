@@ -86,6 +86,7 @@ module.exports = {
       phoneNumber,
       address,
       email,
+      password,
       birthday,
       isDeleted,
     } = req.body;
@@ -96,6 +97,7 @@ module.exports = {
         phoneNumber,
         address,
         email,
+        password,
         birthday,
         isDeleted,
       });
@@ -126,6 +128,7 @@ module.exports = {
       phoneNumber,
       address,
       email,
+      password,
       birthday,
       isDeleted,
     } = req.body;
@@ -138,6 +141,7 @@ module.exports = {
           phoneNumber,
           address,
           email,
+          password,
           birthday,
           isDeleted,
         },
