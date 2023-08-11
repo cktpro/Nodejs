@@ -83,5 +83,29 @@ module.exports = {
     }
   
     return query;
-  }  
+  } ,
+  getDiscountedPrice:(discountName,priceName,quantityName)=>{
+    if(!quantityName){
+      return {$divide: [
+        {
+          $multiply: [
+            { $subtract: [100, `$${discountName}`] },
+            `$${priceName}`,
+          ],
+        },
+        100,
+      ]}
+    }
+    return { $multiply:[{$divide: [
+      {
+        $multiply: [
+          { $subtract: [100, `$${discountName}`] },
+          `$${priceName}`,
+        ],
+      },
+      100,
+    ]},`$${quantityName}`]
+      
+    }
+  }
 };
