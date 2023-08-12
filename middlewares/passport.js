@@ -6,25 +6,28 @@ const BasicStrategy = require('passport-http').BasicStrategy;
 const jwtSettings = require('../constants/jwtSetting');
 const { Customer } = require('../models');
 
-// const passportConfig = new JwtStrategy(
-//   {
-//     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken('Authorization'),
-//     secretOrKey: jwtSettings.SECRET,
-//   },
-//   async (payload, done) => {
-//     try {
-//       const user = await Employee.findById(payload._id).select('-password');
+const passportVerifyToken = new JwtStrategy(
+  {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken('Authorization'),
+    secretOrKey: jwtSettings.SECRET,
+  },
+  async (payload, done) => {
+    try {
+      const user = await Customer.findOne({
+        _id: payload._id,
+        isDeleted: false,
+      }).select('-password');
 
-//       if (!user) return done(null, false);
+      if (!user) return done(null, false);
 
-//       return done(null, user);
-//     } catch (error) {
-//       done(error, false);
-//     }
-//   },
-// );
+      return done(null, user);
+    } catch (error) {
+      done(error, false);
+    }
+  },
+);
 
-const passportConfigLocal = new LocalStrategy({ usernameField: 'email' },
+const passportVerifyAccount = new LocalStrategy({ usernameField: 'email' },
   async (email, password, done) => {
     try {
       const user = await Customer.findOne({
@@ -47,24 +50,24 @@ const passportConfigLocal = new LocalStrategy({ usernameField: 'email' },
   },
 );
 
-// const passportConfigBasic = new BasicStrategy(async function (username, password, done) {
-//   try {
-//     const user = await Employee.findOne({ email: username });
+const passportConfigBasic = new BasicStrategy(async function (username, password, done) {
+  try {
+    const user = await Customer.findOne({ email: username, isDeleted: false });
   
-//     if (!user) return done(null, false);
+    if (!user) return done(null, false);
   
-//     const isCorrectPass = await user.isValidPass(password);
+    const isCorrectPass = await user.isValidPass(password);
   
-//     if (!isCorrectPass) return done(null, false);
+    if (!isCorrectPass) return done(null, false);
   
-//     return done(null, user);
-//   } catch (error) {
-//     done(error, false);
-//   }
-// });
+    return done(null, user);
+  } catch (error) {
+    done(error, false);
+  }
+});
 
 module.exports = {
-  // passportConfig,
-  passportConfigLocal,
-  // passportConfigBasic,
+  passportVerifyToken,
+  passportVerifyAccount,
+  passportConfigBasic,
 };
