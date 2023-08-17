@@ -1,33 +1,64 @@
 const { Customer } = require("../../models");
 const bcrypt = require("bcryptjs");
+const {generateToken} = require('../../helper/jwtHelper');
 module.exports = {
   checkLogin: async (req, res, next) => {
-    const { username, password } = req.body;
-
-    try {
-      const result = await Customer.findOne({ email: username });
-      if (result) {
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
-        const isCorrectPass = await result.isValidPass(password);
-        console.log('◀◀◀ isCorrectPass ▶▶▶',isCorrectPass);
-        if(isCorrectPass){
+    try{
+      const {
+        _id,
+        firstName,
+        lastName,
+        phoneNumber,
+        address,
+        email,
+        birthday,
+        updatedAt,
+      } = req.user
+      const token = generateToken({
+          _id,
+          firstName,
+          lastName,
+          phoneNumber,
+          address,
+          email,
+          birthday,
+          updatedAt,
+        });
           return res.send({
             code: 200,
             mesage: "Login thành công",
-            payload: result,
+            payload: token,
           });
-        }
-      }
-      return res.status(404).json({
-        code: 404,
-        mesage: "Tài khoản hoặc mật khẩu không chính xác",
-      });
     } catch (err) {
       res.send(400, {
         mesage: "Thất bại",
         error: err,
       });
+    }
+  },
+  basicLogin: async (req, res, next) => {
+    try {
+      const user = await Customer.findById(req.user._id).select('-password').lean();
+      const token = generateToken(user);
+      // const refreshToken = generateRefreshToken(user._id);
+
+      res.json({
+        token,
+        // refreshToken,
+      });
+    } catch (err) {
+      res.sendStatus(400);
+    }
+  },
+
+  getMe: async (req, res, next) => {
+    try {
+      res.status(200).json({
+        message: "Layas thoong tin thanfh coong",
+        payload: req.user,
+      });
+    } catch (err) {
+      res.sendStatus(500);
     }
   },
 };
