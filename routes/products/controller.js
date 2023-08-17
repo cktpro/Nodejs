@@ -6,14 +6,31 @@ const {
 module.exports = {
   getList: async (req, res, next) => {
     try {
-      const result = await Product.find({ isDeleted: false })
+      const{page,pageSize,category}=req.query
+      const limit = pageSize || 10
+      const skip= ((page - 1) * limit)
+      const conditionFind={isDeleted:false}
+      if (category!==undefined){
+        conditionFind.categoryId=category
+      }
+      const result = await Product
+     
+    //   .updateMany(
+    //     { isDeleted:true },
+    //     { $set: { "isDeleted" : false } }
+    //  );
+      .find(conditionFind)
         .populate("category")
         .populate("supplier")
-        .lean();
+        .lean()
+        .skip(skip)
+        .limit(limit);
+      const total=await Product.countDocuments()
 
       return res.send(200, {
         message: "Thành công",
         payload: result,
+        total:total
       });
     } catch (err) {
       return res.send(400, {
@@ -47,9 +64,10 @@ module.exports = {
       } else if (priceEnd) {
         conditionFind.price = { $lte: parseFloat(priceEnd) };
       }
-      const result = await Product.find(conditionFind).populate("category")
+      const result = await Product.find(conditionFind)
+      .populate("category")
       .populate("supplier")
-      .lean();;
+      .lean();
       if (result) {
         return res.send(200, {
           mesage: "Thành công",
@@ -69,7 +87,7 @@ module.exports = {
   getDetail: async (req, res, next) => {
     const { id } = req.params;
     try {
-      const result = await Product.findOne({ _id: id,isDeleted:false });
+      const result = await Product.findOne({ _id: id,isDeleted:false }).populate('category').populate('supplier');
       if (result) {
         return res.send(200, {
           message: "Thành công",

@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
 const { validateSchema } = require('../../helper');
-const {checkLogin,basicLogin,getMe}=require('./controller')
+const {checkLogin,basicLogin,getMe, checkRefreshToken}=require('./controller')
 const passport = require('passport');
-const {validationLoginSchema} =require('./validation')
+const {validationLoginSchema,validationRefreshTokenSchema} =require('./validation')
 const {Authorization} =require('../../helper/jwtHelper')
 // LOGIN
 router.route('/login')
@@ -16,6 +16,11 @@ router.route('/login')
   .post(
     passport.authenticate('basic', { session: false }),
     basicLogin
+  );
+  router.route('/checkrefreshtoken')
+  .post(
+    validateSchema(validationRefreshTokenSchema),
+    checkRefreshToken
   );
 
 router.route('/profile')
