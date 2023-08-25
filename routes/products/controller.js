@@ -10,9 +10,7 @@ module.exports = {
       const limit = pageSize || 10
       const skip= ((page - 1) * limit)
       const conditionFind={isDeleted:false}
-      if (category!==undefined){
-        conditionFind.categoryId=category
-      }
+      if(category!=="undefined")conditionFind.categoryId=category;
       const result = await Product
      
     //   .updateMany(
@@ -25,7 +23,7 @@ module.exports = {
         .lean()
         .skip(skip)
         .limit(limit);
-      const total=await Product.countDocuments()
+      const total=await Product.countDocuments(conditionFind)
 
       return res.send(200, {
         message: "Thành công",
