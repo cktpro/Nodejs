@@ -10,7 +10,8 @@ module.exports = {
       const limit = pageSize || 10
       const skip= ((page - 1) * limit)
       const conditionFind={isDeleted:false}
-      if(category!=="undefined")conditionFind.categoryId=category;
+      
+      if(category!=='undefined')conditionFind.categoryId=category;
       const result = await Product
      
     //   .updateMany(

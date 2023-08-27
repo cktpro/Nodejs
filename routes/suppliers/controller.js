@@ -71,7 +71,7 @@ module.exports = {
         payload: result,
       });
     } catch (err) {
-      return res.send(200, {
+      return res.send(400, {
         message: "Thất bại",
         error: err,
       });
