@@ -2,6 +2,7 @@
   "name": "nodejs",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "start": "nodemon ./bin/www"
   },
@@ -24,6 +25,8 @@
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.17",
     "yup": "^1.2.0"
   }
 }

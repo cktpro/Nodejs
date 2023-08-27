@@ -20,6 +20,8 @@ var employeesRouter = require("./routes/employees/router");
 var orderRouter = require("./routes/orders/router");
 var questionRouter = require("./routes/questions/router");
 var authRouter = require("./routes/auth/router");
+var categoryOrm = require("./routes/typeOrm/category/category");
+var {AppDataSource}=require('./data-source');
 
 const {
   passportVerifyToken,
@@ -32,6 +34,9 @@ var app = express();
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
+AppDataSource.initialize().then(async () => {
+  console.log('Data source initialized');
+});
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -73,6 +78,7 @@ app.use("/employees", employeesRouter);
 app.use("/orders", orderRouter);
 app.use("/questions", questionRouter);
 app.use("/auth", authRouter);
+app.use("/typeOrm/category", categoryOrm);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
