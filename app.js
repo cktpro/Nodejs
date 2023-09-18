@@ -10,8 +10,6 @@ const passport = require("passport");
 const BasicStrategy = require('passport-http').BasicStrategy;
 
 var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var writeWelcome = require("./routes/welcome");
 var productsRouter = require("./routes/products/router");
 var categoryRouter = require("./routes/category/router");
 var suppliersRouter = require("./routes/suppliers/router");
@@ -20,6 +18,7 @@ var employeesRouter = require("./routes/employees/router");
 var orderRouter = require("./routes/orders/router");
 var questionRouter = require("./routes/questions/router");
 var authRouter = require("./routes/auth/router");
+var mediaRouter = require("./routes/media/router");
 
 const {
   passportVerifyToken,
@@ -63,9 +62,7 @@ passport.use(new BasicStrategy(
 ));
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
 app.use("/products", productsRouter);
-app.use("/welcomes", writeWelcome);
 app.use("/category", categoryRouter);
 app.use("/suppliers", suppliersRouter);
 app.use("/customers", customersRouter);
@@ -73,6 +70,7 @@ app.use("/employees", employeesRouter);
 app.use("/orders", orderRouter);
 app.use("/questions", questionRouter);
 app.use("/auth", authRouter);
+app.use("/media", mediaRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

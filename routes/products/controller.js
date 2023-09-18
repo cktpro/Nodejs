@@ -6,12 +6,11 @@ const {
 module.exports = {
   getList: async (req, res, next) => {
     try {
-      const{page,pageSize,category}=req.query
+      const{page,pageSize,categoryId}=req.query
       const limit = pageSize || 10
       const skip= ((page - 1) * limit)
       const conditionFind={isDeleted:false}
-      
-      if(category!=='undefined')conditionFind.categoryId=category;
+      if(categoryId) conditionFind.categoryId=categoryId
       const result = await Product
      
     //   .updateMany(
@@ -21,6 +20,7 @@ module.exports = {
       .find(conditionFind)
         .populate("category")
         .populate("supplier")
+        .populate("image")
         .lean()
         .skip(skip)
         .limit(limit);
@@ -86,7 +86,7 @@ module.exports = {
   getDetail: async (req, res, next) => {
     const { id } = req.params;
     try {
-      const result = await Product.findOne({ _id: id,isDeleted:false }).populate('category').populate('supplier');
+      const result = await Product.findOne({ _id: id,isDeleted:false }).populate('category').populate('supplier').populate('image');
       if (result) {
         return res.send(200, {
           message: "Thành công",
@@ -112,6 +112,7 @@ module.exports = {
       categoryId,
       supplierId,
       description,
+      mediaId,
       isDeleted,
     } = req.body;
     try {
@@ -123,6 +124,7 @@ module.exports = {
         categoryId,
         supplierId,
         description,
+        mediaId,
         isDeleted,
       });
       const result = await newRecord.save();
