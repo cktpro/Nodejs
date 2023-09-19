@@ -5,6 +5,12 @@ const validationLoginSchema = yup.object().shape({
     password: yup.string().min(3,"Password quá ngắn").max(50, "Password quá dài").required(({ path }) => `${path.split(".")[1]} không được bỏ trống`),
   }),
 });
+const validationRefreshTokenSchema = yup.object().shape({
+  body: yup.object({
+    refreshToken: yup.string().required(({ path }) => `${path.split(".")[1]} không được bỏ trống`),
+  }),
+})
 module.exports = {
   validationLoginSchema,
+  validationRefreshTokenSchema
 };

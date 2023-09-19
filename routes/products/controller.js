@@ -6,14 +6,31 @@ const {
 module.exports = {
   getList: async (req, res, next) => {
     try {
-      const result = await Product.find({ isDeleted: false })
+      const{page,pageSize,categoryId}=req.query
+      const pages = page || 1
+      const limit = pageSize || 10
+      const skip= ((pages - 1) * limit)
+      const conditionFind={isDeleted:false}
+      if(categoryId) conditionFind.categoryId=categoryId
+      const result = await Product
+     
+    //   .updateMany(
+    //     { isDeleted:true },
+    //     { $set: { "isDeleted" : false } }
+    //  );
+      .find(conditionFind)
         .populate("category")
         .populate("supplier")
-        .lean();
+        .populate("image")
+        .lean()
+        .skip(skip)
+        .limit(limit);
+      const total=await Product.countDocuments(conditionFind)
 
       return res.send(200, {
         message: "Thành công",
         payload: result,
+        total:total
       });
     } catch (err) {
       return res.send(400, {
@@ -47,9 +64,10 @@ module.exports = {
       } else if (priceEnd) {
         conditionFind.price = { $lte: parseFloat(priceEnd) };
       }
-      const result = await Product.find(conditionFind).populate("category")
+      const result = await Product.find(conditionFind)
+      .populate("category")
       .populate("supplier")
-      .lean();;
+      .lean();
       if (result) {
         return res.send(200, {
           mesage: "Thành công",
@@ -69,7 +87,7 @@ module.exports = {
   getDetail: async (req, res, next) => {
     const { id } = req.params;
     try {
-      const result = await Product.findOne({ _id: id,isDeleted:false });
+      const result = await Product.findOne({ _id: id,isDeleted:false }).populate('category').populate('supplier').populate('image');
       if (result) {
         return res.send(200, {
           message: "Thành công",
@@ -95,6 +113,7 @@ module.exports = {
       categoryId,
       supplierId,
       description,
+      mediaId,
       isDeleted,
     } = req.body;
     try {
@@ -106,11 +125,12 @@ module.exports = {
         categoryId,
         supplierId,
         description,
+        mediaId,
         isDeleted,
       });
       const result = await newRecord.save();
       console.log("◀◀◀ result ▶▶▶", result);
-      return res.send(400, {
+      return res.status(200).json({
         mesage: "Thành công",
         payload: result,
       });
@@ -131,6 +151,7 @@ module.exports = {
       categoryId,
       supplierId,
       description,
+      mediaId,
       isDeleted,
     } = req.body;
     try {
@@ -144,6 +165,7 @@ module.exports = {
           categoryId,
           supplierId,
           description,
+          mediaId,
           isDeleted,
         },
         { new: true }

@@ -12,7 +12,8 @@ const supplierSchema = new Schema(
       email: {
         type: String,
         maxLength: [50, "Email không được vượt quá 50 ký tự"],
-        required: true,
+        required: [true,"Email không được bỏ trống"],
+        unique:[true,"Email không được trùng"]
       },
       phoneNumber: {
         type: String,
