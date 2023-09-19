@@ -7,8 +7,9 @@ module.exports = {
   getList: async (req, res, next) => {
     try {
       const{page,pageSize,categoryId}=req.query
+      const pages = page || 1
       const limit = pageSize || 10
-      const skip= ((page - 1) * limit)
+      const skip= ((pages - 1) * limit)
       const conditionFind={isDeleted:false}
       if(categoryId) conditionFind.categoryId=categoryId
       const result = await Product

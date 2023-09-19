@@ -4,8 +4,9 @@ const { isError } = require("util");
 module.exports = {
   getList: async (req, res, next) => {
     const{page,pageSize}=req.query
+    const pages=page || 1
     const limit = pageSize || 10
-     const skip= ((page - 1) * limit)
+     const skip= ((pages - 1) * limit)
      const conditionFind={isDeleted:false}
     try {
       const result = await Category.find(conditionFind)
