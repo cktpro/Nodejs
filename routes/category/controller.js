@@ -3,12 +3,19 @@ const { fuzzySearch } = require("../../helper");
 const { isError } = require("util");
 module.exports = {
   getList: async (req, res, next) => {
+    const{page,pageSize}=req.query
+    const limit = pageSize || 10
+     const skip= ((page - 1) * limit)
+     const conditionFind={isDeleted:false}
     try {
-      const result = await Category.find({ isDeleted: false });
-
+      const result = await Category.find(conditionFind)
+        .skip(skip)
+        .limit(limit);
+      const total=await Category.countDocuments(conditionFind)
       res.send(200, {
         mesage: "Thành công",
         payload: result,
+        total:total
       });
     } catch (err) {
       res.send(400, {

@@ -25,7 +25,7 @@ router.route('/login')
 
 router.route('/profile')
   .get(
-    Authorization(),
+    passport.authenticate('jwt', { session: false }),
     getMe,
   );
 

@@ -129,7 +129,7 @@ module.exports = {
       });
       const result = await newRecord.save();
       console.log("◀◀◀ result ▶▶▶", result);
-      return res.send(400, {
+      return res.status(200).json({
         mesage: "Thành công",
         payload: result,
       });
@@ -150,6 +150,7 @@ module.exports = {
       categoryId,
       supplierId,
       description,
+      mediaId,
       isDeleted,
     } = req.body;
     try {
@@ -163,6 +164,7 @@ module.exports = {
           categoryId,
           supplierId,
           description,
+          mediaId,
           isDeleted,
         },
         { new: true }
