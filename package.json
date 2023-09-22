@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "pm2 start ./bin/www",
+    "stop": "pm2 stop ./bin/www"
+    
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -25,6 +27,8 @@
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "pm2": "^5.3.0",
+    "uuid": "^7.0.3",
     "yup": "^1.2.0"
   }
 }
