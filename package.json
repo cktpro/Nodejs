@@ -1,10 +1,12 @@
 {
   "name": "nodejs",
+  "author": "Cáp Kim Trầm",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "pm2 start ./bin/www",
-    "stop": "pm2 stop ./bin/www"
+    "stop": "pm2 stop ./bin/www",
+    "dev": "nodemon ./bin/www"
     
   },
   "dependencies": {
