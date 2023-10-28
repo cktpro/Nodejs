@@ -19,6 +19,6 @@ router.route('/:id')
   // .patch(updatePatch)
   // .delete(hardDelete)
 
-router.patch('/delete/:id', softDelete);
+router.patch('/delete/:id',softDelete);
 
 module.exports= router

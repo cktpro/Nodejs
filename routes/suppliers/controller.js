@@ -5,11 +5,18 @@ const {
 } = require("../../helper");
 module.exports = {
   getList: async (req, res, next) => {
-    const result = await Supplier.find({ isDeleted: false });
+    const{page,pageSize}=req.query
+    const pages=page || 1
+    const limit = pageSize || 10
+    const skip= ((pages - 1) * limit)
     try {
+      const conditionFind={isDeleted:false}
+      const result = await Supplier.find(conditionFind).skip(skip).limit(limit);
+      const total = await Supplier.countDocuments(conditionFind)
       res.send(200, {
         message: "Thành công",
         payload: result,
+        total:total
       });
     } catch (err) {
       res.send(400, {

@@ -7,8 +7,9 @@ module.exports = {
   getList: async (req, res, next) => {
     try {
       const{page,pageSize,categoryId}=req.query
+      const pages = page || 1
       const limit = pageSize || 10
-      const skip= ((page - 1) * limit)
+      const skip= ((pages - 1) * limit)
       const conditionFind={isDeleted:false}
       if(categoryId) conditionFind.categoryId=categoryId
       const result = await Product
@@ -129,7 +130,7 @@ module.exports = {
       });
       const result = await newRecord.save();
       console.log("◀◀◀ result ▶▶▶", result);
-      return res.send(400, {
+      return res.status(200).json({
         mesage: "Thành công",
         payload: result,
       });
@@ -150,6 +151,7 @@ module.exports = {
       categoryId,
       supplierId,
       description,
+      mediaId,
       isDeleted,
     } = req.body;
     try {
@@ -163,6 +165,7 @@ module.exports = {
           categoryId,
           supplierId,
           description,
+          mediaId,
           isDeleted,
         },
         { new: true }

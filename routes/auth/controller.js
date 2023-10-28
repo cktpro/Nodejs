@@ -100,12 +100,17 @@ module.exports = {
 
   getMe: async (req, res, next) => {
     try {
-      res.status(200).json({
-        message: "Layas thoong tin thanfh coong",
-        payload: req.user,
+      return res.send({
+      code: 200,
+      mesage: 'Thành công',
+      payload: req.user,
       });
     } catch (err) {
-      res.sendStatus(500);
+      return res.status(500).json({
+      code: 500,
+      mesage: 'Thất bại',
+      error: err,
+      });
     }
   },
 };
